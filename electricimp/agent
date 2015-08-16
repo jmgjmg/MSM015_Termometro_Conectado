@@ -1,0 +1,12 @@
+const CARRIOTS_URL = "http://api.carriots.com/streams/";
+const jsonStringA= "{\"protocol\":\"v1\",\"at\": \"now\",\"device\":\"your_device_id\",\"data\":{\"temp\":\"";
+const jsonStringB="\"},\"checksum\":\"\"}";
+
+function postTemperature(tempString) {
+ local body = jsonStringA + tempString + jsonStringB;
+ local request = http.post(CARRIOTS_URL, {"carriots.apiKey":"your_api_key"}, body);
+ local resp = request.sendsync();
+ server.log("HTTPResponse: " + resp.statuscode + " - " + resp.body + " " + tempString);
+}
+
+device.on("sendTemperature", postTemperature);

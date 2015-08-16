@@ -1,0 +1,22 @@
+If expression:
+        (true)
+		
+Then expression:
+        import com.carriots.sdk.utils.BasicHttp;
+        def basicHttp = new BasicHttp();
+        def map= ["user" : "your_ducksboard_api_key", "password":"unused"];
+        basicHttp.http_auth=map;
+        //basicHttp.url ="https://push.ducksboard.com/values/296067";
+        basicHttp.url ="your_ducksboard_PUSH_URL_counter_widget";
+        basicHttp.verb ="POST";
+        basicHttp.payload='{"timestamp": '+ context.envelope.at + ', "value": ' + context.data.temp + '}';
+        basicHttp.send();
+
+        def basicHttp2 = new BasicHttp();
+        def map2= ["user" : "your_ducksboard_api_key", "password":"unused"];
+        basicHttp2.http_auth=map;basicHttp2.url ="your_ducksboard_PUSH_URL_timeline_widget";
+        basicHttp2.verb ="POST";
+        Date d= new Date();
+        basicHttp2.payload='{"value":{"title": "Temperatura: ' + context.data.temp  +'", "image": ' +
+             '"https://app.ducksboard.com/static/img/timeline/green.gif" , "content":"Tiemstamp: '+ d.toString() +'"}}';
+        basicHttp2.send();

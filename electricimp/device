@@ -1,0 +1,42 @@
+server.log("Device Started...");
+local receiving=false;
+local s="";
+local sSize=0;
+arduino <- hardware.uart57;
+
+function arduinoData() {
+ local b = arduino.read();
+ while(b != -1) {
+   if (b==0xFB) {
+     receiving=true;
+     s="";
+     sSize=0;
+     server.log("begin string");
+   } else {
+      if (receiving) {
+         sSize++;
+         if (sSize>10) {
+            sSize=0;
+            s="";
+            receiving=false;
+            server.log("reset string");
+         } else {
+            if (b == 0xFC) {
+               agent.send("sendTemperature", s);
+               server.log("Receiving Temperature value: " +s);
+               sSize=0;
+               s="";
+              receiving=false;
+            } else {
+               s= s+b.tochar();
+            }
+         }
+      } else {
+         server.log("Received garbage data: " +b.tostring());
+      }
+   }
+   b = arduino.read();
+ }
+}
+
+arduino.configure(9600, 8, PARITY_NONE, 1, NO_CTSRTS, arduinoData);
